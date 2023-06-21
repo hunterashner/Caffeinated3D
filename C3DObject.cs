@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,6 +29,17 @@ namespace Caffeinated3D
         private Model _model;
         private Effect _effect;
 
+        private C3DObjectEffectManager _effectManager;
+
+
+        /// <summary>
+        /// Basic constructor that takes object model and a custom shader to draw with.
+        /// More constructors will be added to handle different starting positions,
+        /// and removing shader requirements as they can be added and removed using the
+        /// newly added effect manager.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="effect"></param>
         public C3DObject(Model model, Effect effect)
         {
             _model = model;
@@ -42,6 +54,19 @@ namespace Caffeinated3D
 
             //we will always need to multiply the world matrix by the matrix3x3 for accurate rendering
             Matrix3x3 = UpdateMatrix(ScaleMatrix, RotationMatrix, TranslationMatrix);
+
+            _effectManager = new C3DObjectEffectManager();
+        }
+
+
+        /// <summary>
+        /// adds new shader to list of effects that will be iterated through for this objects 
+        /// draw call.
+        /// </summary>
+        /// <param name="effect"></param>
+        public void AddEffect(IEffectC3D effect)
+        {
+            _effectManager.AddEffect(effect);
         }
 
         public void Update(GameTime gameTime, float deltaTime, float speed, Vector3 dir, Quaternion rot)
@@ -53,6 +78,15 @@ namespace Caffeinated3D
             Matrix3x3 = UpdateMatrix(ScaleMatrix, RotationMatrix, TranslationMatrix);
         }
 
+
+        /// <summary>
+        /// Draws object using monogame's basicEffect class, currently used exclusively for testing
+        /// draws calls vs those using custom shaders for debugging.
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="world"></param>
+        /// <param name="view"></param>
+        /// <param name="projection"></param>
         public void DrawWithBasicEffects(GameTime gameTime, Matrix world, Matrix view, Matrix projection)
         {
             foreach(ModelMesh mesh in _model.Meshes)
@@ -68,65 +102,116 @@ namespace Caffeinated3D
             }
         }
 
-        /*
-         * Shader passed via effect to draw call, need to refactor to allow inheritence or batching of draws
-         * especially for objects making usage of multiple shaders or reusing shaders; ex. lighting, shadows,etc.
-         */
+        /// <summary>
+        /// Shader passed via effect to draw call, need to refactor to allow inheritence or batching of draws
+        /// especially for objects making usage of multiple shaders or reusing shaders; ex.lighting, shadows,etc.
+        /// 
+        /// Totally useless draw call, only using it for testing different shaders, totally overhauling
+        /// shader/effect processing and rendering.
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="gameTime"></param>
+        /// <param name="world"></param>
+        /// <param name="view"></param>
+        /// <param name="projection"></param>
         public void DrawUsingCustomEffect(Effect effect, GameTime gameTime, Matrix world, Matrix view, Matrix projection)
         {
             foreach(ModelMesh mesh in _model.Meshes)
             {
                 foreach(ModelMeshPart part in mesh.MeshParts)
                 {
+                    //Matrix worldInverseTranspose = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     part.Effect = effect;
                     effect.Parameters["WorldMatrix"].SetValue(world * Matrix3x3 * mesh.ParentBone.Transform);
                     effect.Parameters["ViewMatrix"].SetValue(view);
                     effect.Parameters["ProjectionMatrix"].SetValue(projection);
-                    effect.Parameters["AmbienceColor"].SetValue(new Vector4(0.1f, 0.5f, 0.7f, 1.0f));
+                    effect.Parameters["AmbienceColor"].SetValue(new Vector4(0.1f, 0.2f, 0.7f, 1.0f));
+                    effect.Parameters["WorldInverseTransposeMatrix"].SetValue(Matrix.Invert(Matrix.Transpose(world)));
+                    effect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(-1.0f, 0.0f, 0.0f));
+                    effect.Parameters["DiffuseColor"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                 }
 
                 mesh.Draw();
             }
         }
 
+
+        /// <summary>
+        /// Calls drawing for the 3D objects effect manager
+        /// </summary>
+        public void DrawWithEffectManager()
+        {
+
+        }
+
+        /// <summary>
+        /// Updates objects vec3 position and translation matrix
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        /// <param name="speed"></param>
+        /// <param name="direction"></param>
         void Move(float deltaTime, float speed, Vector3 direction)
         {
             Position += direction * speed * deltaTime;
             TranslationMatrix = Matrix.CreateTranslation(Position);
         }
 
+        /// <summary>
+        /// Test method, applies a linear rotation along the y axis to 3D object
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        /// <param name="speed"></param>
+        /// <param name="rot"></param>
         void IdleObjectRotate(float deltaTime, float speed, Quaternion rot)
         {
             Rotation += rot * speed * deltaTime;
-            RotationMatrix = Matrix.CreateRotationX(MathHelper.ToRadians(Rotation.X)) *
-                             Matrix.CreateRotationY(MathHelper.ToRadians(Rotation.Y));
+            RotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Rotation.Y));
         }
 
 
         /// <summary>
-        /// Updates the entire matrix 4x4 for the 3D object for easy usage
+        /// Updates the entire matrix 3x3 for the 3D object for easy usage
         /// when passing to shaders, takes a scalar matrix, rotational matrix,
         /// and translation matrix and multiplies them in the correct order
         /// </summary>
         /// <param name="scale"></param>
         /// <param name="rot"></param>
         /// <param name="pos"></param>
-        /// <returns>Returns the updated matrix4x4 of the 3d object</returns>
-        public Matrix UpdateMatrix(Matrix scale, Matrix rot, Matrix pos)
+        /// <returns>Returns the updated matrix3x3 of the 3d object</returns>
+        public static Matrix UpdateMatrix(Matrix scale, Matrix rot, Matrix pos)
         {
-            Matrix m4x4;
+            Matrix m3x3;
 
-            m4x4 = scale * rot * pos;
-            return m4x4;
+            m3x3 = scale * rot * pos;
+            return m3x3;
         }
 
         /// <summary>
         /// Takes a quaternion and creates a rotation matrix based on the
         /// quaternion values
+        /// considering moving static methods to helper util
         /// </summary>
         /// <param name="rotation"></param>
         /// <returns>Returns a rotation matrix</returns>
-        public Matrix UpdateRotationMatrix(Quaternion rotation)
+        public static Matrix UpdateRotationMatrix(Quaternion rotation)
+        {
+            Matrix rotMatrix;
+
+            rotMatrix = Matrix.CreateRotationX(MathHelper.ToRadians(rotation.X)) *
+                        Matrix.CreateRotationY(MathHelper.ToRadians(rotation.Y)) *
+                        Matrix.CreateRotationZ(MathHelper.ToRadians(rotation.Z));
+
+            return rotMatrix;
+        }
+
+        /// <summary>
+        /// Takes a vector3 and creates a rotation matrix based on the
+        /// vector3 values
+        /// considering moving static methods to helper util
+        /// </summary>
+        /// <param name="rotation"></param>
+        /// <returns>Returns a rotation matrix</returns>
+        public static Matrix UpdateRotationMatrix(Vector3 rotation)
         {
             Matrix rotMatrix;
 
