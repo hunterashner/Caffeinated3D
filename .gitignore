@@ -55,3 +55,11 @@ monodroid*.msi
 /CompiledContent/Windows/IgnoreMe.dll
 *.cachefile
 *.dll
+/.vs/ProjectEvaluation
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/.vs/Caffeinated3D/v17
+/.vs/Caffeinated3D/FileContentIndex
+/.vs/Caffeinated3D/DesignTimeBuild
+/Caffeinated3D.sln
