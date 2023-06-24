@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,38 +10,29 @@ namespace Caffeinated3D
 {
     public class BasicDiffuseEffect : IEffectC3D
     {
-        private bool _paramsSet;
-        public void ApplyEffect()
+        public Effect Shader { get; set; }
+
+        public BasicDiffuseEffect(Effect shader)
         {
-            if(!_paramsSet) 
-            {
-                throw new Exception(
-                    $@"Can not apply shader of type ${GetType()}, check params"
-                    );
-            }
-
-            //apply the effect
-
-            /*
-             * reset the parameters as they will need to be updated to reflect
-             * changes to light direction, world/view matrices etc.
-             * 
-             */
-            _paramsSet = false;
+            Shader = shader;
         }
 
-        public void SetEffectParams()
+        public void SetEffectParams(Matrix world, Matrix view, Matrix projection)
         {
             try
             {
-                //set effect params
+                Shader.Parameters["WorldMatrix"].SetValue(world);
+                Shader.Parameters["ViewMatrix"].SetValue(view);
+                Shader.Parameters["ProjectionMatrix"].SetValue(projection);
+                Shader.Parameters["AmbienceColor"].SetValue(new Vector4(0.1f, 0.2f, 0.7f, 1.0f));
+                Shader.Parameters["WorldInverseTransposeMatrix"].SetValue(Matrix.Invert(Matrix.Transpose(world)));
+                Shader.Parameters["DiffuseLightDirection"].SetValue(new Vector3(-1.0f, 0.0f, 0.0f));
+                Shader.Parameters["DiffuseColor"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             }
             catch (Exception e)
             {
-                //
+                throw new Exception($@"Can not apply shader of type ${GetType()}, check params");
             }
-
-            _paramsSet = true;
         }
     }
 }

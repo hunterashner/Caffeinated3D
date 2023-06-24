@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,27 +9,27 @@ namespace Caffeinated3D
 {
     public class C3DObjectEffectManager
     {
-        private List<IEffectC3D> _effects;
+        public List<IEffectC3D> Effects;
         public C3DObjectEffectManager()
         {
-            _effects = new List<IEffectC3D>();
+            Effects = new List<IEffectC3D>();
         }
 
         public void AddEffect(IEffectC3D effect)
         {
-            _effects.Add(effect);
+            Effects.Add(effect);
         }
 
         public void RemoveEffect(IEffectC3D effect)
         {
-            _effects.Remove(effect);
+            Effects.Remove(effect);
         }
 
-        public void ApplyEffects()
+        public void SetEffectParams(Matrix world, Matrix view, Matrix projection)
         {
-            foreach(var effect in _effects)
+            foreach(var effect in Effects)
             {
-                effect.ApplyEffect();
+                effect.SetEffectParams(world, view, projection);
             }
         }
     }

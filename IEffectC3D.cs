@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Caffeinated3D
 {
     public interface IEffectC3D
-    {
-        void ApplyEffect();
-        void SetEffectParams();
+    {      
+        Effect Shader { get; set; }
+        void SetEffectParams(Matrix world, Matrix view, Matrix projection);
     }
 }
