@@ -13,13 +13,17 @@ namespace Caffeinated3D
         Vector3 position;
         Vector3 rotation;
         public Matrix ViewMatrix { get; private set; }
+        public Matrix ProjectionMatrix { get; private set; }
+        public Matrix WorldMatrix { get; private set; }
         float speed;
 
         public PerspectiveCamera()
         {
-            position = new Vector3(0, 50, 50);
+            position = new Vector3(0, 10, 50);
             rotation = new Vector3(0, 0, 0);
             ViewMatrix = Matrix.CreateLookAt(position, rotation, Vector3.UnitY);
+            WorldMatrix = Matrix.CreateTranslation(new Vector3(0, 0, 0));
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), 1920f / 1080f, 0.1f, 2000f);
             speed = 50.0f;
         }
 
