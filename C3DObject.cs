@@ -13,7 +13,7 @@ namespace Caffeinated3D
 {
     /// <summary>
     /// Basic class for all 3D Objects with functions for drawing updating
-    /// position, rotation, matrix, etc.  Currently used for testing of 
+    /// Position, Rotation, matrix, etc.  Currently used for testing of 
     /// rendering passes and custom HLSL shader effects.
     /// </summary>
     public class C3DObject
@@ -72,7 +72,7 @@ namespace Caffeinated3D
         public void Update(GameTime gameTime, float deltaTime, float speed, Vector3 dir, Quaternion rot)
         {
             //idleobjectrotate in usage for testing
-            //update scale, rotation, and translation here
+            //update scale, Rotation, and translation here
             IdleObjectRotate(deltaTime, speed, rot);
             Move(deltaTime, speed, dir);
             Matrix3x3 = UpdateMatrix(ScaleMatrix, RotationMatrix, TranslationMatrix);
@@ -145,7 +145,7 @@ namespace Caffeinated3D
         }
 
         /// <summary>
-        /// Updates objects vec3 position and translation matrix
+        /// Updates objects vec3 Position and translation matrix
         /// </summary>
         /// <param name="deltaTime"></param>
         /// <param name="speed"></param>
@@ -157,7 +157,7 @@ namespace Caffeinated3D
         }
 
         /// <summary>
-        /// Test method, applies a linear rotation along the y axis to 3D object
+        /// Test method, applies a linear Rotation along the y axis to 3D object
         /// </summary>
         /// <param name="deltaTime"></param>
         /// <param name="speed"></param>
@@ -187,12 +187,12 @@ namespace Caffeinated3D
         }
 
         /// <summary>
-        /// Takes a quaternion and creates a rotation matrix based on the
+        /// Takes a quaternion and creates a Rotation matrix based on the
         /// quaternion values
         /// considering moving static methods to helper util
         /// </summary>
         /// <param name="rotation"></param>
-        /// <returns>Returns a rotation matrix</returns>
+        /// <returns>Returns a Rotation matrix</returns>
         public static Matrix UpdateRotationMatrix(Quaternion rotation)
         {
             Matrix rotMatrix;
@@ -205,12 +205,12 @@ namespace Caffeinated3D
         }
 
         /// <summary>
-        /// Takes a vector3 and creates a rotation matrix based on the
+        /// Takes a vector3 and creates a Rotation matrix based on the
         /// vector3 values
         /// considering moving static methods to helper util
         /// </summary>
         /// <param name="rotation"></param>
-        /// <returns>Returns a rotation matrix</returns>
+        /// <returns>Returns a Rotation matrix</returns>
         public static Matrix UpdateRotationMatrix(Vector3 rotation)
         {
             Matrix rotMatrix;

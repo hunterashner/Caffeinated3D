@@ -13,6 +13,7 @@ namespace Caffeinated3D.Rendering
     public class PlaneC3D
     {
         public EffectManagerC3D EffectManager { get; set; }
+        private BasicEffect _basicEffect;
         private GraphicsDevice _gd;
         private VertexBuffer _vertexBuffer;
         private Vector3 _origin;
@@ -25,6 +26,7 @@ namespace Caffeinated3D.Rendering
             _dimensions = dimensions;
             EffectManager= new EffectManagerC3D();
             EffectManager.AddEffect(shader);
+            _basicEffect = new BasicEffect(_gd);
 
             GenerateVertices(origin, dimensions);
             GenerateVertexBuffer(origin, dimensions);
@@ -122,6 +124,7 @@ namespace Caffeinated3D.Rendering
             //bind buffer and choose draw options
             _gd.SetVertexBuffer(_vertexBuffer);
             RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.FillMode = FillMode.WireFrame;
             rasterizerState.CullMode = CullMode.None;
             _gd.RasterizerState = rasterizerState;
 

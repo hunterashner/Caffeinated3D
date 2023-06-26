@@ -16,7 +16,7 @@ namespace Caffeinated3D.Rendering
             if (points.Count < 3)
                 throw new ArgumentException("At least three points are required to compute the Convex Hull.");
 
-            // Find the point with the lowest y-coordinate (and leftmost x-coordinate in case of a tie)
+            // Find the point with the lowest z-coordinate (and leftmost x-coordinate in case of a tie)
             Vector3 startPoint = points.Aggregate((p1, p2) =>
             {
                 if (p1.Z < p2.Z || (p1.Z == p2.Z && p1.X < p2.X))
@@ -25,21 +25,21 @@ namespace Caffeinated3D.Rendering
             });
 
             // Sort the points based on their polar angle with respect to the startPoint
-            List<Vector3> sortedPoints = points.OrderBy(p => GetPolarAngle(startPoint, p)).ToList();
+            points.Sort((p1, p2) => ComparePolarAngle(startPoint, p1, p2));
 
             // Create a stack to store the points of the Convex Hull
             Stack<Vector3> convexHull = new Stack<Vector3>();
-            convexHull.Push(sortedPoints[0]);
-            convexHull.Push(sortedPoints[1]);
+            convexHull.Push(points[0]);
+            convexHull.Push(points[1]);
 
-            for (int i = 2; i < sortedPoints.Count; i++)
+            for (int i = 2; i < points.Count; i++)
             {
-                while (convexHull.Count > 1 && !IsLeftTurn(convexHull.ElementAt(1), convexHull.Peek(), sortedPoints[i]))
+                while (convexHull.Count > 1 && !IsLeftTurn(convexHull.ElementAt(1), convexHull.Peek(), points[i]))
                 {
                     convexHull.Pop();
                 }
 
-                convexHull.Push(sortedPoints[i]);
+                convexHull.Push(points[i]);
             }
 
             return convexHull.Reverse().ToList();
@@ -93,10 +93,10 @@ namespace Caffeinated3D.Rendering
                 }
             }
 
-            // Add the last triangle
-            //triangles.Add(convexHull[indices[0]]);
-            //triangles.Add(convexHull[indices[1]]);
-            //triangles.Add(convexHull[indices[2]]);
+            //Add the last triangle
+            triangles.Add(convexHull[indices[0]]);
+            triangles.Add(convexHull[indices[1]]);
+            triangles.Add(convexHull[indices[2]]);
 
             return triangles;
         }
@@ -136,6 +136,19 @@ namespace Caffeinated3D.Rendering
             bool b3 = IsLeftTurn(p3, p1, point);
 
             return (b1 == b2) && (b2 == b3);
+        }
+
+        private static int ComparePolarAngle(Vector3 startPoint, Vector3 p1, Vector3 p2)
+        {
+            float angle1 = GetPolarAngle(startPoint, p1);
+            float angle2 = GetPolarAngle(startPoint, p2);
+
+            if (angle1 < angle2)
+                return -1;
+            if (angle1 > angle2)
+                return 1;
+
+            return 0;
         }
 
         //public static void Main(string[] args)
