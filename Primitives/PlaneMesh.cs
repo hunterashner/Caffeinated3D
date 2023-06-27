@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Caffeinated3D.Rendering;
+using System;
 
 namespace Caffeinated3D.Primitives
 {
@@ -80,8 +81,9 @@ namespace Caffeinated3D.Primitives
         ///// <returns>short array of</returns>
         public short[] GenerateIndices()
         {
+            long overflowDebug = 0;
             short[] indices = new short[(_width - 1) * (_height - 1) * 6];
-            short current = 0;
+            long current = 0;
 
             for (int y = 0; y < _height - 1; y++)
             {

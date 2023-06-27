@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Caffeinated3D
+namespace Caffeinated3D.Rendering
 {
     /// <summary>
     /// Camera abstraction of View and Projection matrices with a simple free move camera without gravity.
@@ -27,7 +27,7 @@ namespace Caffeinated3D
 
         public PerspectiveCamera()
         {
-            Position = new Vector3(0, 0, -10);
+            Position = new Vector3(50, 1, 50);
             Rotation = new Vector3(0, 0, 0);
             WorldMatrix = Matrix.CreateTranslation(new Vector3(0, 0, 0));
 
@@ -39,8 +39,8 @@ namespace Caffeinated3D
             Forward = Vector3.Transform(Vector3.Forward, RotationMatrix);
             Target = Position + Forward;
             ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.Up);
-            _sensitivity = 250.0f;
-            speed = 12.5f;
+            _sensitivity = 200.0f;
+            speed = 7.5f;
         }
 
 
@@ -64,7 +64,7 @@ namespace Caffeinated3D
             Vector3 newPos = Position;
             Vector3 newRotation = Rotation;
 
-            if(gamePadState.IsConnected)
+            if (gamePadState.IsConnected)
             {
                 float leftThumbX = gamePadState.ThumbSticks.Left.X;
                 float leftThumbY = gamePadState.ThumbSticks.Left.Y;
@@ -105,7 +105,7 @@ namespace Caffeinated3D
                 {
                     newPos += new Vector3(0, -1 * speed / 4 * deltaTime, 0);
                 }
-            } 
+            }
             else
             {
                 if (kstate.IsKeyDown(Keys.A))

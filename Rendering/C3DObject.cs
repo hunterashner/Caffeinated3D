@@ -5,11 +5,12 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Caffeinated3D.Shaders;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace Caffeinated3D
+namespace Caffeinated3D.Rendering
 {
     /// <summary>
     /// Basic class for all 3D Objects with functions for drawing updating
@@ -89,9 +90,9 @@ namespace Caffeinated3D
         /// <param name="projection"></param>
         public void DrawWithBasicEffects(GameTime gameTime, Matrix world, Matrix view, Matrix projection)
         {
-            foreach(ModelMesh mesh in _model.Meshes)
+            foreach (ModelMesh mesh in _model.Meshes)
             {
-                foreach(BasicEffect effect in mesh.Effects)
+                foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.World = world * Matrix3x3;
                     effect.View = view;
@@ -116,9 +117,9 @@ namespace Caffeinated3D
         /// <param name="projection"></param>
         public void DrawUsingCustomEffect(Effect effect, GameTime gameTime, Matrix world, Matrix view, Matrix projection)
         {
-            foreach(ModelMesh mesh in _model.Meshes)
+            foreach (ModelMesh mesh in _model.Meshes)
             {
-                foreach(ModelMeshPart part in mesh.MeshParts)
+                foreach (ModelMeshPart part in mesh.MeshParts)
                 {
                     //Matrix worldInverseTranspose = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     part.Effect = effect;

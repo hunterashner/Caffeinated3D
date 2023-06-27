@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Caffeinated3D.Shaders;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace Caffeinated3D
+namespace Caffeinated3D.Rendering
 {
     public class C3DObjectEffectManager
     {
@@ -23,7 +24,7 @@ namespace Caffeinated3D
 
         public void SetEffectParams(Matrix world, Matrix view, Matrix projection)
         {
-            foreach(var effect in Effects)
+            foreach (var effect in Effects)
             {
                 effect.SetEffectParams(world, view, projection);
             }

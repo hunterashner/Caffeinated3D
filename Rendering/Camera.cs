@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Caffeinated3D
+namespace Caffeinated3D.Rendering
 {
     /// <summary>
     /// Used for main camera creation and/or direct manipulation and
@@ -31,10 +31,10 @@ namespace Caffeinated3D
 
         public Camera(Vector3? startingPos, Vector3? startingTarget)
         {
-            this.Position = startingPos ?? new Vector3(0, 70, 100);
-            this.Target = startingTarget ?? new Vector3(0, 0, 0);
+            Position = startingPos ?? new Vector3(0, 70, 100);
+            Target = startingTarget ?? new Vector3(0, 0, 0);
             //this.ViewMatrix = Matrix.CreateLookAt(this.Position, this.Target, Vector3.UnitY);
-            this.ViewMatrix = Matrix.CreateLookAt(this.Position, this.Target, Vector3.UnitY);
+            ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.UnitY);
 
             _speed = 50.0f;
         }
@@ -46,29 +46,29 @@ namespace Caffeinated3D
             MouseState mstate = Mouse.GetState();
 
 
-            Vector3 lookAt = new Vector3(this.Position.X, 45, this.Position.Z);
+            Vector3 lookAt = new Vector3(Position.X, 45, Position.Z);
             if (kstate.IsKeyDown(Keys.A))
             {
-                this.Position += Vector3.Left * _speed * deltaTime;
-                this.ViewMatrix = Matrix.CreateLookAt(this.Position, lookAt, Vector3.UnitY);
+                Position += Vector3.Left * _speed * deltaTime;
+                ViewMatrix = Matrix.CreateLookAt(Position, lookAt, Vector3.UnitY);
             }
 
             if (kstate.IsKeyDown(Keys.D))
             {
-                this.Position += Vector3.Right * _speed * deltaTime;
-                this.ViewMatrix = Matrix.CreateLookAt(this.Position, lookAt, Vector3.UnitY);
+                Position += Vector3.Right * _speed * deltaTime;
+                ViewMatrix = Matrix.CreateLookAt(Position, lookAt, Vector3.UnitY);
             }
 
             if (kstate.IsKeyDown(Keys.W))
             {
-                this.Position += Vector3.Forward * _speed * deltaTime;
-                this.ViewMatrix = Matrix.CreateLookAt(this.Position, lookAt, Vector3.UnitY);
+                Position += Vector3.Forward * _speed * deltaTime;
+                ViewMatrix = Matrix.CreateLookAt(Position, lookAt, Vector3.UnitY);
             }
 
             if (kstate.IsKeyDown(Keys.S))
             {
-                this.Position += Vector3.Backward * _speed * deltaTime;
-                this.ViewMatrix = Matrix.CreateLookAt(this.Position, lookAt, Vector3.UnitY);
+                Position += Vector3.Backward * _speed * deltaTime;
+                ViewMatrix = Matrix.CreateLookAt(Position, lookAt, Vector3.UnitY);
             }
             #endregion
         }
@@ -78,8 +78,8 @@ namespace Caffeinated3D
             _yaw -= deltaX * _sensitivity;
             _pitch = deltaY * _sensitivity;
 
-            if(_pitch > 89.0f) { _pitch = 89.0f; }
-            if( _pitch < -89.0f) { _pitch = -89.0f; }
+            if (_pitch > 89.0f) { _pitch = 89.0f; }
+            if (_pitch < -89.0f) { _pitch = -89.0f; }
 
             UpdateTarget();
         }
@@ -94,7 +94,7 @@ namespace Caffeinated3D
             updatedTarget.Y = MathF.Sin(pitchRadians);
             updatedTarget.Z = -MathF.Cos(yawRadians) * MathF.Cos(pitchRadians);
 
-            this.Target = updatedTarget;
+            Target = updatedTarget;
         }
     }
 }

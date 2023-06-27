@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Caffeinated3D.Shaders;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Caffeinated3D.Rendering

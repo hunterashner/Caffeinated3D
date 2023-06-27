@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caffeinated3D
+namespace Caffeinated3D.Shaders
 {
     public class BasicDiffuseEffect : IEffectC3D
     {
