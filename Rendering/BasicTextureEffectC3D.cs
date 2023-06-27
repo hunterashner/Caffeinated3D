@@ -8,30 +8,31 @@ using System.Threading.Tasks;
 
 namespace Caffeinated3D.Rendering
 {
-    public class BasicDiffuseShaderC3D : EffectC3D
+    public class BasicTextureEffectC3D : EffectC3D
     {
         private PerspectiveCamera _camera;
-        private 
-
-        Matrix _world;
-        Matrix _view;
-        Matrix _projection;
-        Matrix _objectPosition;
-        Matrix _objectRotation;
-        Matrix _objectScale;
-        public BasicDiffuseShaderC3D(GraphicsDevice graphicsDevice, 
-            byte[] effectCode, 
-            PerspectiveCamera camera
+        private Matrix _world;
+        private Matrix _view;
+        private Matrix _projection;
+        private Matrix _objectPosition;
+        private Matrix _objectRotation;
+        private Matrix _objectScale;
+        private Texture2D _uv;
+        public BasicTextureEffectC3D(GraphicsDevice graphicsDevice,
+            byte[] effectCode,
+            PerspectiveCamera camera,
+            Texture2D uv
             ) : base(graphicsDevice, effectCode)
         {
             _camera = camera;
+            _uv = uv;
         }
 
-        public BasicDiffuseShaderC3D(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count)
+        public BasicTextureEffectC3D(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count)
         {
         }
 
-        protected BasicDiffuseShaderC3D(Effect cloneSource) : base(cloneSource)
+        protected BasicTextureEffectC3D(Effect cloneSource) : base(cloneSource)
         {
         }
 
@@ -47,6 +48,7 @@ namespace Caffeinated3D.Rendering
                 Parameters["WorldInverseTransposeMatrix"].SetValue(Matrix.Invert(Matrix.Transpose(_world)));
                 Parameters["DiffuseLightDirection"].SetValue(new Vector3(-1.0f, 0.0f, 0.0f));
                 Parameters["DiffuseColor"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                Parameters["ModelTexture"].SetValue(_uv);
             }
             catch (Exception e)
             {

@@ -122,7 +122,7 @@ namespace Caffeinated3D
                 {
                     //Matrix worldInverseTranspose = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     part.Effect = effect;
-                    effect.Parameters["WorldMatrix"].SetValue(world * Matrix3x3 * mesh.ParentBone.Transform);
+                    effect.Parameters["WorldMatrix"].SetValue(world * Matrix.CreateTranslation(Position));
                     effect.Parameters["ViewMatrix"].SetValue(view);
                     effect.Parameters["ProjectionMatrix"].SetValue(projection);
                     effect.Parameters["AmbienceColor"].SetValue(new Vector4(0.1f, 0.2f, 0.7f, 1.0f));

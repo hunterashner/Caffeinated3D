@@ -124,7 +124,7 @@ namespace Caffeinated3D.Rendering
             //bind buffer and choose draw options
             _gd.SetVertexBuffer(_vertexBuffer);
             RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.FillMode = FillMode.WireFrame;
+            rasterizerState.FillMode = FillMode.Solid;
             rasterizerState.CullMode = CullMode.None;
             _gd.RasterizerState = rasterizerState;
 
