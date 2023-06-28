@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Caffeinated3D.Rendering
 {
@@ -15,15 +16,19 @@ namespace Caffeinated3D.Rendering
         public Vector3 Forward { get; set; }
         public Vector3 Up { get; set; }
         public Vector3 Right { get; set; }
-
-        public Matrix RotationMatrix { get; set; }
-        private float _cameraYaw;
-        private float _cameraPitch;
         public Matrix ViewMatrix { get; private set; }
         public Matrix ProjectionMatrix { get; private set; }
         public Matrix WorldMatrix { get; private set; }
-        float speed;
-        float _sensitivity;
+        public Matrix RotationMatrix { get; set; }
+
+        private float _cameraYaw;
+        private float _cameraPitch;
+        private int lastMouseX;
+        private int lastMouseY;
+
+        private float speed;
+        private float _sensitivityGamepad;
+        private float _sensitivityMouse;
 
         public PerspectiveCamera()
         {
@@ -35,11 +40,15 @@ namespace Caffeinated3D.Rendering
             ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), 1920f / 1080f, 0.1f, 2000f);
             _cameraYaw = 0;
             _cameraPitch = 0;
-            RotationMatrix = Matrix.CreateFromYawPitchRoll(MathHelper.ToRadians(_cameraYaw), MathHelper.ToRadians(_cameraPitch), MathHelper.ToRadians(0));
+            RotationMatrix = Matrix.CreateFromYawPitchRoll(
+                MathHelper.ToRadians(_cameraYaw), 
+                MathHelper.ToRadians(_cameraPitch), 
+                MathHelper.ToRadians(0));
             Forward = Vector3.Transform(Vector3.Forward, RotationMatrix);
             Target = Position + Forward;
             ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.Up);
-            _sensitivity = 200.0f;
+            _sensitivityGamepad = 200.0f;
+            _sensitivityMouse = 10.0f;
             speed = 7.5f;
         }
 
@@ -59,7 +68,6 @@ namespace Caffeinated3D.Rendering
             {
                 //alert that controller input has been detected
             }
-            KeyboardState kstate = Keyboard.GetState();
 
             Vector3 newPos = Position;
             Vector3 newRotation = Rotation;
@@ -74,12 +82,12 @@ namespace Caffeinated3D.Rendering
                 if (rightThumbX != 0)
                 {
                     //newRotation += new Vector3(rightThumbX * speed / 5 * deltaTime, 0, 0);
-                    _cameraYaw -= rightThumbX * _sensitivity * deltaTime;
+                    _cameraYaw -= rightThumbX * _sensitivityGamepad * deltaTime;
                 }
                 if (rightThumbY != 0)
                 {
                     //newRotation += new Vector3(0, rightThumbY * speed / 5 * deltaTime, 0);
-                    _cameraPitch += rightThumbY * _sensitivity * deltaTime;
+                    _cameraPitch += rightThumbY * _sensitivityGamepad * deltaTime;
                 }
 
                 _cameraYaw = (_cameraYaw + 180f) % 360f - 180f;
@@ -108,25 +116,50 @@ namespace Caffeinated3D.Rendering
             }
             else
             {
+                KeyboardState kstate = Keyboard.GetState();
+                MouseState mstate = Mouse.GetState();
+
+                int currentMouseX = mstate.X;
+                int currentMouseY = mstate.Y;
+
+                if(currentMouseX != lastMouseX)
+                {
+                    int deltaX = currentMouseX - lastMouseX;
+                    _cameraYaw -= deltaX * _sensitivityMouse * deltaTime;
+                }
+
+                if (currentMouseY != lastMouseY)
+                {
+                    int deltaY = currentMouseY - lastMouseY;
+                    _cameraPitch -= deltaY * _sensitivityMouse * deltaTime;
+                }
+
+                _cameraYaw = (_cameraYaw + 180f) % 360f - 180f;
+                _cameraPitch = MathHelper.Clamp(_cameraPitch, -89.9f, 89.9f);
+
+
                 if (kstate.IsKeyDown(Keys.A))
                 {
-                    newPos += Vector3.Left * speed * deltaTime;
+                    newPos += Right * Vector3.Left * speed * deltaTime;
                 }
 
                 if (kstate.IsKeyDown(Keys.D))
                 {
-                    newPos += Vector3.Right * speed * deltaTime;
+                    newPos += Right * Vector3.Right * speed * deltaTime;
                 }
 
                 if (kstate.IsKeyDown(Keys.W))
                 {
-                    newPos += Vector3.Forward * speed * deltaTime;
+                    newPos -= Forward * Vector3.Forward * speed * deltaTime;
                 }
 
                 if (kstate.IsKeyDown(Keys.S))
                 {
-                    newPos += Vector3.Backward * speed * deltaTime;
+                    newPos -= Forward * Vector3.Backward * speed * deltaTime;
                 }
+
+                lastMouseX = currentMouseX;
+                lastMouseY = currentMouseY;
             }
 
             Position = newPos;

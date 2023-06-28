@@ -52,7 +52,7 @@ namespace Caffeinated3D.Primitives
              * and not stretch to cover the entire plane. refactor later with custom
              * functions for wrapping.
              */
-            int wrapFactor = 24;
+            int wrapFactor = 64;
             int startingX = 0;
             int startingZ = 0;
             int counter = 0;
